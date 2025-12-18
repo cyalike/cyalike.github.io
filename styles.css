@@ -51,7 +51,7 @@ html,body{ height:100%; margin:0; font-family: ui-sans-serif, system-ui, -apple-
 .layout{
   height: calc(100vh - 62px);
   display:grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 0.8fr 460px;
 }
 
 #map{ height:100%; }
@@ -104,15 +104,14 @@ html,body{ height:100%; margin:0; font-family: ui-sans-serif, system-ui, -apple-
 }
 
 .card h3{
-  margin:0 0 6px;
-  font-size: 16px;
-  letter-spacing: .2px;
+  margin:0 0 8px;
+  font-size: 20px;   /* 原本 16 → 20 */
+  font-weight: 700;
 }
-
 .meta{
   color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 14px;   /* 原本 12 → 14 */
+  line-height: 1.7;
 }
 
 .tags{
