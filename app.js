@@ -103,10 +103,10 @@ async function main() {
 
   renderTagOptions(state.places);
 
-  // 🔥 高雄預設中心（重點）
+  // ✅ 高雄預設中心
   const map = L.map("map").setView([22.6273, 120.3014], 13);
 
-  // 🔥 乾淨地圖（幾乎沒雜訊）
+  // ✅ 乾淨底圖（雜訊少）
   L.tileLayer(
     "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     {
@@ -135,4 +135,8 @@ async function main() {
   syncListAndMarkers(map);
 }
 
-main();
+main().catch(err => {
+  console.error(err);
+  alert("讀取 places.json 失敗：請檢查檔案格式或 Pages 是否部署完成。");
+});
+
