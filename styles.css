@@ -1,151 +1,161 @@
-:root{
-  --bg: #f6f7fb;
-  --panel: rgba(255,255,255,.78);
-  --card: rgba(255,255,255,.86);
-  --text: #0f172a;
-  --muted: rgba(15,23,42,.62);
-  --line: rgba(15,23,42,.10);
-  --shadow: 0 10px 30px rgba(15,23,42,.08);
-  --shadow2: 0 8px 20px rgba(15,23,42,.10);
-  --radius: 18px;
+// ===== 狀態 =====
+const state = {
+  places: [],
+  markers: new Map(),
+  query: "",
+  currentTag: ""
+};
+
+const $ = (s) => document.querySelector(s);
+
+// ===== 工具 =====
+function normalize(s) {
+  return (s || "").toString().toLowerCase().trim();
 }
 
-*{ box-sizing:border-box; }
-html,body{ height:100%; margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", "Segoe UI", Arial; color:var(--text); background:var(--bg); }
+function matches(place, q, tag) {
+  const text = normalize(q);
+  const tagOk = !tag || (place.tags || []).includes(tag);
 
-.topbar{
-  display:grid;
-  grid-template-columns: 220px 1fr 160px;
-  gap:12px;
-  align-items:center;
-  padding:14px 16px;
-  position:sticky;
-  top:0;
-  z-index:10;
-  background: rgba(246,247,251,.75);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
+  if (!text) return tagOk;
+
+  const hay = [
+    place.name,
+    place.address,
+    (place.tags || []).join(" "),
+    place.notes
+  ].map(normalize).join(" ");
+
+  return tagOk && hay.includes(text);
 }
 
-.brand{
-  font-weight: 800;
-  letter-spacing: .2px;
-  display:flex;
-  align-items:center;
-  gap:8px;
+function filteredPlaces() {
+  return state.places.filter(p => matches(p, state.query, state.currentTag));
 }
 
-.search,.select{
-  width:100%;
-  padding: 11px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,.72);
-  color: var(--text);
-  outline:none;
-  box-shadow: 0 1px 0 rgba(15,23,42,.04);
+// ===== 右邊清單 =====
+function renderTagOptions(places) {
+  const tags = new Set();
+  places.forEach(p => (p.tags || []).forEach(t => tags.add(t)));
+
+  const select = $("#tagFilter");
+  select.innerHTML =
+    `<option value="">所有標籤</option>` +
+    [...tags].sort().map(t => `<option value="${t}">${t}</option>`).join("");
 }
 
-.search::placeholder{ color: rgba(15,23,42,.45); }
+function placeCard(place) {
+  const tags = (place.tags || []).map(t => `<span class="tag">${t}</span>`).join("");
 
-.layout{
-  height: calc(100vh - 62px);
-  display:grid;
-  grid-template-columns: 0.8fr 460px;
+  const mustTry = (place.mustTry && place.mustTry.length)
+    ? `<div class="meta">😋 ${place.mustTry.join("、")}</div>`
+    : "";
+
+  const seating = place.seating ? `<div class="meta">🪑 位子：${place.seating}</div>` : "";
+  const toilet = place.toilet ? `<div class="meta">🚻 廁所：${place.toilet}</div>` : "";
+  const hours = place.hours ? `<div class="meta">🕒 ${place.hours}</div>` : "";
+  const revisit = place.revisit ? `<div class="meta">🔁 ${place.revisit}</div>` : "";
+
+  // ❗不顯示「備註」兩字，只顯示你寫的內容
+  const notes = place.notes ? `<div class="meta">${place.notes}</div>` : "";
+
+  return `
+    <div class="card" data-id="${place.id}">
+      <h3>${place.name}</h3>
+      ${mustTry}
+      ${seating}
+      ${toilet}
+      ${hours}
+      ${revisit}
+      ${notes}
+      ${place.address ? `<div class="meta">📍 ${place.address}</div>` : ""}
+      <div class="tags">${tags}</div>
+    </div>
+  `;
 }
 
-#map{ height:100%; }
+// ===== 地圖 popup（只留最基本）=====
+function popupHtml(place) {
+  const addr = place.address
+    ? `<div style="margin-top:6px;font-size:12px;opacity:.8">📍 ${place.address}</div>`
+    : "";
 
-.panel{
-  height:100%;
-  padding: 12px;
-  border-left: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.35));
-  backdrop-filter: blur(14px);
+  return `
+    <div style="min-width:220px">
+      <div style="font-weight:700;font-size:14px">${place.name}</div>
+      ${addr}
+    </div>
+  `;
 }
 
-.panel-header{
-  padding: 12px 12px 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--panel);
-  box-shadow: var(--shadow);
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  margin-bottom: 10px;
+// ===== 同步清單與地圖 =====
+function syncListAndMarkers(map) {
+  const list = $("#list");
+  const shown = filteredPlaces();
+
+  $("#count").textContent = `${shown.length} / ${state.places.length}`;
+  list.innerHTML = shown.map(placeCard).join("");
+
+  for (const p of state.places) {
+    const m = state.markers.get(p.id);
+    if (!m) continue;
+    const shouldShow = shown.some(x => x.id === p.id);
+    if (shouldShow && !map.hasLayer(m)) m.addTo(map);
+    if (!shouldShow && map.hasLayer(m)) map.removeLayer(m);
+  }
+
+  list.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = card.dataset.id;
+      const place = state.places.find(p => p.id === id);
+      const marker = state.markers.get(id);
+      if (!place || !marker) return;
+      map.flyTo([place.lat, place.lng], 16, { duration: 0.8 });
+      marker.openPopup();
+    });
+  });
 }
 
-.panel-title{ font-weight: 800; }
-.count{ font-size:12px; color: var(--muted); }
+// ===== 主程式 =====
+async function main() {
+  const res = await fetch("places.json", { cache: "no-store" });
+  const places = await res.json();
 
-.list{
-  height: calc(100% - 120px);
-  overflow:auto;
-  padding: 2px;
-  display:grid;
-  gap: 10px;
-}
+  state.places = places.filter(
+    p => p && p.id && p.name && typeof p.lat === "number" && typeof p.lng === "number"
+  );
 
-.card{
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 12px 12px;
-  background: var(--card);
-  box-shadow: var(--shadow2);
-  cursor:pointer;
-  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-}
+  renderTagOptions(state.places);
 
-.card:hover{
-  transform: translateY(-1px);
-  border-color: rgba(15,23,42,.18);
-  box-shadow: 0 14px 34px rgba(15,23,42,.12);
-}
+  // 🔥 高雄預設
+  const map = L.map("map").setView([22.6273, 120.3014], 13);
 
-.card h3{
-  margin:0 0 8px;
-  font-size: 20px;   /* 原本 16 → 20 */
-  font-weight: 700;
-}
-.meta{
-  color: var(--muted);
-  font-size: 14px;   /* 原本 12 → 14 */
-  line-height: 1.7;
-}
+  // 🔥 乾淨底圖（輔助用）
+  L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap & CARTO"
+    }
+  ).addTo(map);
 
-.tags{
-  margin-top: 10px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
+  for (const p of state.places) {
+    const m = L.marker([p.lat, p.lng]).bindPopup(popupHtml(p));
+    state.markers.set(p.id, m);
+    m.addTo(map);
+  }
+
+  $("#search").addEventListener("input", e => {
+    state.query = e.target.value;
+    syncListAndMarkers(map);
+  });
+
+  $("#tagFilter").addEventListener("change", e => {
+    state.currentTag = e.target.value;
+    syncListAndMarkers(map);
+  });
+
+  syncListAndMarkers(map);
 }
 
-.tag{
-  font-size:12px;
-  padding: 5px 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(15,23,42,.10);
-  color: rgba(15,23,42,.72);
-  background: rgba(255,255,255,.65);
-}
-
-.help{
-  margin-top: 10px;
-  border: 1px dashed rgba(15,23,42,.18);
-  border-radius: var(--radius);
-  padding: 10px 12px;
-  color: var(--muted);
-  background: rgba(255,255,255,.55);
-}
-
-.help code{ color: var(--text); }
-
-/* Leaflet popup 跟你的卡片風格一致一點 */
-.leaflet-popup-content-wrapper{
-  border-radius: 16px !important;
-  box-shadow: 0 14px 40px rgba(15,23,42,.18) !important;
-}
-.leaflet-popup-content{
-  margin: 12px 14px !important;
-}
+main();
