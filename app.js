@@ -1,4 +1,4 @@
-// 建立地圖（台灣視角，避免只看到北部）
+// 建立地圖（台灣視角，避免只看到單一城市）
 const map = L.map('map').setView([23.7, 121], 7);
 
 // 底圖
@@ -9,12 +9,12 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const list = document.getElementById("list");
 const markers = [];
 
-// 讀 places.json
+// 從 places.json 讀資料
 fetch('places.json')
   .then(res => res.json())
   .then(places => {
     places.forEach(p => {
-      // 📍 地圖標記（藍針）
+      // 📍 預設藍針
       const marker = L.marker([p.lat, p.lng])
         .addTo(map)
         .bindPopup(`
@@ -24,14 +24,12 @@ fetch('places.json')
 
       markers.push(marker);
 
-      // 📋 右側清單卡片
+      // 右側清單
       const div = document.createElement("div");
       div.className = "item";
-
       div.innerHTML = `
         <strong>${p.name}</strong><br>
-        <small>${p.address || ""}</small><br>
-        ${p.tags ? `<small>🏷 ${p.tags.join("、")}</small>` : ""}
+        <small>${p.address || ""}</small>
       `;
 
       // 點清單 → 地圖跳過去
@@ -43,12 +41,13 @@ fetch('places.json')
       list.appendChild(div);
     });
 
-    // 自動縮放
+    // 自動縮放到所有點
     if (markers.length > 0) {
       const group = L.featureGroup(markers);
       map.fitBounds(group.getBounds().pad(0.2));
     }
   })
   .catch(err => {
-    console.error("❌ places.json 讀取失敗", err);
+    console.error("places.json 讀取失敗", err);
   });
+
