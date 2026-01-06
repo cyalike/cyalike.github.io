@@ -1,161 +1,97 @@
-// ===== 狀態 =====
-const state = {
-  places: [],
-  markers: new Map(),
-  query: "",
-  currentTag: ""
-};
+* { box-sizing: border-box; }
 
-const $ = (s) => document.querySelector(s);
-
-// ===== 工具 =====
-function normalize(s) {
-  return (s || "").toString().toLowerCase().trim();
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial;
+  background: #fff;
 }
 
-function matches(place, q, tag) {
-  const text = normalize(q);
-  const tagOk = !tag || (place.tags || []).includes(tag);
-
-  if (!text) return tagOk;
-
-  const hay = [
-    place.name,
-    place.address,
-    (place.tags || []).join(" "),
-    place.notes
-  ].map(normalize).join(" ");
-
-  return tagOk && hay.includes(text);
+.topbar {
+  height: 56px;
+  padding: 0 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-function filteredPlaces() {
-  return state.places.filter(p => matches(p, state.query, state.currentTag));
+.brand {
+  font-size: 18px;
+  font-weight: 700;
 }
 
-// ===== 右邊清單 =====
-function renderTagOptions(places) {
-  const tags = new Set();
-  places.forEach(p => (p.tags || []).forEach(t => tags.add(t)));
-
-  const select = $("#tagFilter");
-  select.innerHTML =
-    `<option value="">所有標籤</option>` +
-    [...tags].sort().map(t => `<option value="${t}">${t}</option>`).join("");
+.hint {
+  font-size: 12px;
+  color: #6b7280;
 }
 
-function placeCard(place) {
-  const tags = (place.tags || []).map(t => `<span class="tag">${t}</span>`).join("");
-
-  const mustTry = (place.mustTry && place.mustTry.length)
-    ? `<div class="meta">😋 ${place.mustTry.join("、")}</div>`
-    : "";
-
-  const seating = place.seating ? `<div class="meta">🪑 位子：${place.seating}</div>` : "";
-  const toilet = place.toilet ? `<div class="meta">🚻 廁所：${place.toilet}</div>` : "";
-  const hours = place.hours ? `<div class="meta">🕒 ${place.hours}</div>` : "";
-  const revisit = place.revisit ? `<div class="meta">🔁 ${place.revisit}</div>` : "";
-
-  // ❗不顯示「備註」兩字，只顯示你寫的內容
-  const notes = place.notes ? `<div class="meta">${place.notes}</div>` : "";
-
-  return `
-    <div class="card" data-id="${place.id}">
-      <h3>${place.name}</h3>
-      ${mustTry}
-      ${seating}
-      ${toilet}
-      ${hours}
-      ${revisit}
-      ${notes}
-      ${place.address ? `<div class="meta">📍 ${place.address}</div>` : ""}
-      <div class="tags">${tags}</div>
-    </div>
-  `;
+/* ✅ 電腦/平板：左清單(70%) 右地圖(30%) */
+.layout {
+  height: calc(100vh - 56px);
+  display: flex;
 }
 
-// ===== 地圖 popup（只留最基本）=====
-function popupHtml(place) {
-  const addr = place.address
-    ? `<div style="margin-top:6px;font-size:12px;opacity:.8">📍 ${place.address}</div>`
-    : "";
-
-  return `
-    <div style="min-width:220px">
-      <div style="font-weight:700;font-size:14px">${place.name}</div>
-      ${addr}
-    </div>
-  `;
+/* 清單區 */
+.panel {
+  flex: 0 0 70%;
+  padding: 12px 14px;
+  overflow: auto;
 }
 
-// ===== 同步清單與地圖 =====
-function syncListAndMarkers(map) {
-  const list = $("#list");
-  const shown = filteredPlaces();
+.panel-title {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
 
-  $("#count").textContent = `${shown.length} / ${state.places.length}`;
-  list.innerHTML = shown.map(placeCard).join("");
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-  for (const p of state.places) {
-    const m = state.markers.get(p.id);
-    if (!m) continue;
-    const shouldShow = shown.some(x => x.id === p.id);
-    if (shouldShow && !map.hasLayer(m)) m.addTo(map);
-    if (!shouldShow && map.hasLayer(m)) map.removeLayer(m);
+/* 每個店家卡片 */
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.card:hover {
+  background: #f9fafb;
+}
+
+.card .name {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.card .meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* 地圖區（一定要有高度） */
+.map {
+  flex: 0 0 30%;
+  border-left: 1px solid #e5e7eb;
+}
+
+/* ✅ 手機：改成 上清單 下地圖（清單為主） */
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+
+  .panel {
+    height: 60vh;
+    flex: none;
+    border-bottom: 1px solid #e5e7eb;
   }
 
-  list.querySelectorAll(".card").forEach(card => {
-    card.addEventListener("click", () => {
-      const id = card.dataset.id;
-      const place = state.places.find(p => p.id === id);
-      const marker = state.markers.get(id);
-      if (!place || !marker) return;
-      map.flyTo([place.lat, place.lng], 16, { duration: 0.8 });
-      marker.openPopup();
-    });
-  });
-}
-
-// ===== 主程式 =====
-async function main() {
-  const res = await fetch("places.json", { cache: "no-store" });
-  const places = await res.json();
-
-  state.places = places.filter(
-    p => p && p.id && p.name && typeof p.lat === "number" && typeof p.lng === "number"
-  );
-
-  renderTagOptions(state.places);
-
-  // 🔥 高雄預設
-  const map = L.map("map").setView([22.6273, 120.3014], 13);
-
-  // 🔥 乾淨底圖（輔助用）
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap & CARTO"
-    }
-  ).addTo(map);
-
-  for (const p of state.places) {
-    const m = L.marker([p.lat, p.lng]).bindPopup(popupHtml(p));
-    state.markers.set(p.id, m);
-    m.addTo(map);
+  .map {
+    height: 40vh;
+    flex: none;
+    border-left: none;
   }
-
-  $("#search").addEventListener("input", e => {
-    state.query = e.target.value;
-    syncListAndMarkers(map);
-  });
-
-  $("#tagFilter").addEventListener("change", e => {
-    state.currentTag = e.target.value;
-    syncListAndMarkers(map);
-  });
-
-  syncListAndMarkers(map);
 }
 
-main();
