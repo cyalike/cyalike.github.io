@@ -8,7 +8,7 @@ html, body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
-/* 上方標題 */
+/* 上方標題列 */
 .topbar {
   height: 56px;
   padding: 0 16px;
@@ -24,10 +24,11 @@ html, body {
   display: flex;
 }
 
-/* 🗺️ 地圖（左 30% + 灰色保底） */
+/* 🗺️ 地圖（左 30%，永遠灰色保底） */
 #map {
   flex: 0 0 30%;
-  background: #e5e7eb;
+  background: #d1d5db;   /* 灰色一定存在 */
+  min-height: 300px;
 }
 
 /* 📋 清單（右 70%） */
@@ -70,3 +71,4 @@ html, body {
     flex: none;
   }
 }
+
