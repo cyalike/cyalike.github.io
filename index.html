@@ -5,13 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>我的美食地圖</title>
 
-  <!-- favicon：你原本的 -->
   <link rel="icon" type="image/png" href="favicon.png?v=3">
-
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  >
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -26,7 +22,13 @@
 
   <!-- 清單右 -->
   <aside class="panel">
-    <h2>店家清單</h2>
+    <!-- 🔍 搜尋 -->
+    <input
+      id="search"
+      class="search"
+      type="text"
+      placeholder="搜尋 店名 / 地址 / #關鍵字"
+    >
     <div id="list"></div>
   </aside>
 </main>
@@ -35,3 +37,4 @@
 <script src="app.js"></script>
 </body>
 </html>
+
