@@ -87,5 +87,3 @@ searchEl.addEventListener("input", () => {
 
   renderList(filtered);
 });
-
-
