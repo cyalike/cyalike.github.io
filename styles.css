@@ -15,43 +15,33 @@ html, body {
   border-bottom: 1px solid #ddd;
 }
 
-/* 主版面 */
 .layout {
   height: calc(100vh - 56px);
   display: flex;
 }
 
-/* 地圖 */
 #map {
   flex: 0 0 30%;
 }
 
-/* 右側 */
 .panel {
   flex: 0 0 70%;
   padding: 12px;
   overflow-y: auto;
 }
 
-/* 🔍 搜尋框 */
 .search {
   width: 100%;
   padding: 8px 10px;
   margin-bottom: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 14px;
 }
 
-/* 店家項目 */
 .item {
   padding: 10px 0;
   border-bottom: 1px solid #eee;
   cursor: pointer;
-}
-
-.item:last-child {
-  border-bottom: none;
 }
 
 .item .name {
@@ -59,17 +49,21 @@ html, body {
 }
 
 .item .tags {
-  color: #555;
   font-size: 13px;
-  margin: 2px 0;
+  color: #555;
 }
 
 .item .address {
-  color: #777;
   font-size: 13px;
+  color: #777;
 }
 
-/* 手機 */
+.empty {
+  padding: 24px 8px;
+  color: #888;
+  font-size: 14px;
+}
+
 @media (max-width: 900px) {
   .layout {
     flex-direction: column;
@@ -84,11 +78,6 @@ html, body {
     height: 60vh;
     flex: none;
   }
-}
-
-/* ✅ 保命：強制給地圖高度（不然會看起來消失） */
-#map {
-  height: calc(100vh - 56px);
 }
 
 
