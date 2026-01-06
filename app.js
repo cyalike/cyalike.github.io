@@ -14,6 +14,7 @@ fetch('places.json')
   .then(res => res.json())
   .then(places => {
     allPlaces = places;
+    console.log("抓到的 places：", places);
     renderList(places);
   });
 
