@@ -1,142 +1,48 @@
-// ===== 全站狀態 =====
-const state = {
-  places: [],
-  markers: new Map(),
-  query: "",
-  currentTag: ""
-};
+// 你可以在這裡新增店家（之後要接 places.json 也可以）
+const places = [
+  { name: "阿宗麵線", lat: 25.044, lng: 121.507, note: "西門町" },
+  { name: "永康牛肉麵", lat: 25.033, lng: 121.529, note: "大安區" },
+  { name: "阜杭豆漿", lat: 25.0419, lng: 121.5250, note: "善導寺" }
+];
 
-const $ = (s) => document.querySelector(s);
+// 建立地圖（預設中心：台北）
+const map = L.map('map', { zoomControl: true }).setView([25.033, 121.5654], 12);
 
-// ===== 工具 =====
-function normalize(s) {
-  return (s || "").toString().toLowerCase().trim();
-}
+// 底圖（OpenStreetMap）
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap'
+}).addTo(map);
 
-function matches(place, q, tag) {
-  const text = normalize(q);
-  const tagOk = !tag || (place.tags || []).includes(tag);
+const listEl = document.getElementById("list");
+const markers = [];
 
-  if (!text) return tagOk;
+// 產生清單 + 標記
+places.forEach((p) => {
+  const marker = L.marker([p.lat, p.lng]).addTo(map).bindPopup(`<b>${p.name}</b><br>${p.note || ""}`);
+  markers.push(marker);
 
-  const hay = [
-    place.name,
-    place.address,
-    (place.tags || []).join(" "),
-    place.notes
-  ].map(normalize).join(" ");
-
-  return tagOk && hay.includes(text);
-}
-
-function filteredPlaces() {
-  return state.places.filter(p => matches(p, state.query, state.currentTag));
-}
-
-// ===== UI =====
-function renderTagOptions(places) {
-  const tags = new Set();
-  places.forEach(p => (p.tags || []).forEach(t => tags.add(t)));
-
-  const select = $("#tagFilter");
-  select.innerHTML =
-    `<option value="">所有標籤</option>` +
-    [...tags].sort().map(t => `<option value="${t}">${t}</option>`).join("");
-}
-
-function placeCard(place) {
-  const tags = (place.tags || []).map(t => `<span class="tag">${t}</span>`).join("");
-  return `
-    <div class="card" data-id="${place.id}">
-      <h3>${place.name}</h3>
-      ${place.notes ? `<div class="meta">📝 ${place.notes}</div>` : ""}
-      ${place.address ? `<div class="meta">📍 ${place.address}</div>` : ""}
-      <div class="tags">${tags}</div>
-    </div>
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="name">${p.name}</div>
+    <div class="meta">${p.note || ""}</div>
   `;
-}
 
-function popupHtml(place) {
-  return `
-    <div style="min-width:200px">
-      <strong>${place.name}</strong>
-      ${place.notes ? `<div style="margin-top:6px;font-size:12px">📝 ${place.notes}</div>` : ""}
-    </div>
-  `;
-}
-
-function syncListAndMarkers(map) {
-  const list = $("#list");
-  const shown = filteredPlaces();
-
-  $("#count").textContent = `${shown.length} / ${state.places.length}`;
-  list.innerHTML = shown.map(placeCard).join("");
-
-  for (const p of state.places) {
-    const m = state.markers.get(p.id);
-    if (!m) continue;
-    const shouldShow = shown.some(x => x.id === p.id);
-    if (shouldShow && !map.hasLayer(m)) m.addTo(map);
-    if (!shouldShow && map.hasLayer(m)) map.removeLayer(m);
-  }
-
-  list.querySelectorAll(".card").forEach(card => {
-    card.addEventListener("click", () => {
-      const id = card.dataset.id;
-      const place = state.places.find(p => p.id === id);
-      const marker = state.markers.get(id);
-      if (!place || !marker) return;
-      map.flyTo([place.lat, place.lng], 16, { duration: 0.8 });
-      marker.openPopup();
-    });
-  });
-}
-
-// ===== 主程式 =====
-async function main() {
-  const res = await fetch("places.json", { cache: "no-store" });
-  const places = await res.json();
-
-  state.places = places.filter(
-    p => p && p.id && p.name && typeof p.lat === "number" && typeof p.lng === "number"
-  );
-
-  renderTagOptions(state.places);
-
-  // ✅ 高雄預設中心
-  const map = L.map("map").setView([22.6273, 120.3014], 13);
-
-  // ✅ 乾淨底圖（雜訊少）
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap & CARTO"
-    }
-  ).addTo(map);
-
-  // markers
-  for (const p of state.places) {
-    const m = L.marker([p.lat, p.lng]).bindPopup(popupHtml(p));
-    state.markers.set(p.id, m);
-    m.addTo(map);
-  }
-
-  $("#search").addEventListener("input", e => {
-    state.query = e.target.value;
-    syncListAndMarkers(map);
+  // 點清單 -> 地圖飛過去 + 開 popup
+  card.addEventListener("click", () => {
+    map.setView([p.lat, p.lng], 16, { animate: true });
+    marker.openPopup();
   });
 
-  $("#tagFilter").addEventListener("change", e => {
-    state.currentTag = e.target.value;
-    syncListAndMarkers(map);
-  });
-
-  syncListAndMarkers(map);
-}
-
-main().catch(err => {
-  console.error(err);
-  alert("讀取 places.json 失敗：請檢查檔案格式或 Pages 是否部署完成。");
+  listEl.appendChild(card);
 });
+
+// 讓地圖一開始能看到全部點
+if (places.length >= 2) {
+  const group = L.featureGroup(markers);
+  map.fitBounds(group.getBounds().pad(0.2));
+} else if (places.length === 1) {
+  map.setView([places[0].lat, places[0].lng], 16);
+}
 
