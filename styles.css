@@ -6,7 +6,6 @@ html, body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
-/* 上方 */
 .topbar {
   height: 56px;
   padding: 0 16px;
@@ -22,36 +21,55 @@ html, body {
   display: flex;
 }
 
-/* 地圖左 30%（不強加顏色） */
+/* 地圖 */
 #map {
   flex: 0 0 30%;
 }
 
-/* 清單右 70% */
+/* 右側 */
 .panel {
   flex: 0 0 70%;
   padding: 12px;
   overflow-y: auto;
 }
 
-.panel h2 {
-  margin-top: 0;
+/* 🔍 搜尋框 */
+.search {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
 }
 
-/* 清單項目 */
+/* 店家項目 */
 .item {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
   cursor: pointer;
 }
 
-.item:hover {
-  background: #f7f7f7;
+.item:last-child {
+  border-bottom: none;
 }
 
-/* 手機 / 平板 */
+.item .name {
+  font-weight: 700;
+}
+
+.item .tags {
+  color: #555;
+  font-size: 13px;
+  margin: 2px 0;
+}
+
+.item .address {
+  color: #777;
+  font-size: 13px;
+}
+
+/* 手機 */
 @media (max-width: 900px) {
   .layout {
     flex-direction: column;
@@ -67,5 +85,6 @@ html, body {
     flex: none;
   }
 }
+
 
 
