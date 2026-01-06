@@ -5,15 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>我的美食地圖</title>
 
-  <!-- favicon：用你之前做好的（防快取） -->
+  <!-- favicon：你原本的 -->
   <link rel="icon" type="image/png" href="favicon.png?v=3">
 
-  <!-- Leaflet -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   >
-
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -23,22 +21,15 @@
 </header>
 
 <main class="layout">
-  <!-- 🗺️ 地圖外層（灰色一定存在） -->
-  <section class="map-wrap">
-    <div id="map"></div>
-  </section>
+  <!-- 地圖左 -->
+  <section id="map"></section>
 
-  <!-- 📋 清單 -->
+  <!-- 清單右 -->
   <aside class="panel">
     <h2>店家清單</h2>
     <div id="list"></div>
   </aside>
 </main>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="app.js"></script>
