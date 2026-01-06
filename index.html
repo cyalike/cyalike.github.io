@@ -3,26 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>我的美食清單地圖</title>
+  <title>我的美食地圖</title>
 
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <!-- ✅ favicon（防快取） -->
+  <link rel="icon" type="image/png" href="favicon.png?v=2">
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <!-- 自訂樣式 -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header class="topbar">
-  🍜 我的美食清單（清單為主）
+  🍜 我的美食地圖
 </header>
 
 <main class="layout">
+  <!-- 地圖在左 -->
+  <section id="map"></section>
+
+  <!-- 清單在右 -->
   <aside class="panel">
     <h2>店家清單</h2>
     <div id="list"></div>
   </aside>
-
-  <section id="map"></section>
 </main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
+
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="app.js"></script>
