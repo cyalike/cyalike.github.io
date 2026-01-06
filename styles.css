@@ -1,4 +1,6 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
@@ -6,21 +8,29 @@ html, body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
+/* 上方標題 */
 .topbar {
   height: 56px;
   padding: 0 16px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #ddd;
   font-weight: 700;
+  border-bottom: 1px solid #ddd;
 }
 
+/* 主版面 */
 .layout {
   height: calc(100vh - 56px);
   display: flex;
 }
 
-/* 清單 70% */
+/* 🗺️ 地圖（左 30% + 灰色保底） */
+#map {
+  flex: 0 0 30%;
+  background: #e5e7eb;
+}
+
+/* 📋 清單（右 70%） */
 .panel {
   flex: 0 0 70%;
   padding: 12px;
@@ -31,29 +41,7 @@ html, body {
   margin-top: 0;
 }
 
-/* 地圖 30% */
-#map {
-  flex: 0 0 30%;
-}
-
-/* 手機版：上清單，下地圖 */
-@media (max-width: 900px) {
-  .layout {
-    flex-direction: column;
-  }
-
-  .panel {
-    height: 60vh;
-    flex: none;
-  }
-
-  #map {
-    height: 40vh;
-    flex: none;
-  }
-}
-
-/* 清單卡片 */
+/* 清單項目 */
 .item {
   padding: 10px;
   border: 1px solid #ddd;
@@ -66,3 +54,19 @@ html, body {
   background: #f9f9f9;
 }
 
+/* 📱 手機 / 平板：上下排列 */
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  #map {
+    height: 40vh;
+    flex: none;
+  }
+
+  .panel {
+    height: 60vh;
+    flex: none;
+  }
+}
