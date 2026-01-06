@@ -24,14 +24,20 @@ html, body {
   display: flex;
 }
 
-/* 🗺️ 地圖（左 30%，永遠灰色保底） */
-#map {
+/* 🗺️ 地圖外層：永遠灰色 */
+.map-wrap {
   flex: 0 0 30%;
-  background: #d1d5db;   /* 灰色一定存在 */
+  background: #d1d5db;   /* 灰色鎖死 */
   min-height: 300px;
+  display: flex;
 }
 
-/* 📋 清單（右 70%） */
+/* Leaflet 實際吃的容器 */
+#map {
+  flex: 1;
+}
+
+/* 📋 清單 */
 .panel {
   flex: 0 0 70%;
   padding: 12px;
@@ -42,7 +48,7 @@ html, body {
   margin-top: 0;
 }
 
-/* 清單項目 */
+/* 清單卡片 */
 .item {
   padding: 10px;
   border: 1px solid #ddd;
@@ -61,7 +67,7 @@ html, body {
     flex-direction: column;
   }
 
-  #map {
+  .map-wrap {
     height: 40vh;
     flex: none;
   }
@@ -71,4 +77,5 @@ html, body {
     flex: none;
   }
 }
+
 
