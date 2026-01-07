@@ -6,7 +6,6 @@
 }
 
 html, body {
-  height: 100%;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
                "PingFang TC", "Noto Sans TC", sans-serif;
@@ -27,23 +26,27 @@ html, body {
 }
 
 /* =====================
-   主版面
+   主版面（不要鎖高度）
 ===================== */
 .layout {
   display: flex;
-  height: calc(100vh - 56px);
+  align-items: flex-start; /* 👈 關鍵，避免被撐高 */
 }
 
-/* 地圖（輔助） */
+/* =====================
+   地圖（固定高度）
+===================== */
 #map {
-  width: 38%;
+  width: 35%;
   min-width: 260px;
+  height: calc(100vh - 56px); /* 👈 高度只給地圖 */
 }
 
-/* 右側清單（主角） */
+/* =====================
+   右側清單（跟內容走）
+===================== */
 .panel {
-  width: 62%;
-  overflow-y: auto;
+  width: 65%;
   padding: 16px;
 }
 
@@ -67,38 +70,34 @@ html, body {
   padding: 14px 0;
 }
 
-/* 點擊區 */
 .item-header {
   cursor: pointer;
 }
 
-/* 店名（主視覺） */
 .item-header .name {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 6px;
 }
 
-/* 標籤 */
 .item-header .tags {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #999;
   margin-bottom: 4px;
 }
 
-/* 地址 */
 .item-header .address {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #666;
 }
 
 /* =====================
-   展開內容（預設隱藏）
+   展開內容
 ===================== */
 .item-detail {
   display: none;
   margin-top: 10px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #444;
   line-height: 1.6;
 }
@@ -112,7 +111,6 @@ html, body {
   color: #777;
 }
 
-/* 點開後顯示 */
 .item.open .item-detail {
   display: block;
 }
@@ -141,10 +139,10 @@ html, body {
 
   .panel {
     width: 100%;
-    height: 65vh;
+    padding: 16px;
   }
 
   .item-header .name {
-    font-size: 1.3rem;
+    font-size: 1.35rem;
   }
 }
