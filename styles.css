@@ -26,20 +26,20 @@ html, body {
 }
 
 /* =====================
-   主版面（不要鎖高度）
+   主版面（左右，不鎖高度）
 ===================== */
 .layout {
   display: flex;
-  align-items: flex-start; /* 👈 關鍵，避免被撐高 */
+  align-items: flex-start;
 }
 
 /* =====================
-   地圖（固定高度）
+   地圖（左，固定高度）
 ===================== */
 #map {
   width: 35%;
   min-width: 260px;
-  height: calc(100vh - 56px); /* 👈 高度只給地圖 */
+  height: calc(100vh - 56px);
 }
 
 /* =====================
@@ -70,35 +70,35 @@ html, body {
   padding: 14px 0;
 }
 
+/* 點擊區 */
 .item-header {
   cursor: pointer;
 }
 
+/* 店名（主視覺，最大） */
 .item-header .name {
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 600;
   margin-bottom: 6px;
+  color: #222;
 }
 
-.item-header .tags {
+/* tag 與地址（同層、同色） */
+.item-header .tags,
+.item-header .address {
   font-size: 0.95rem;
-  color: #999;
+  color: #222;
   margin-bottom: 4px;
 }
 
-.item-header .address {
-  font-size: 0.9rem;
-  color: #666;
-}
-
 /* =====================
-   展開內容
+   展開內容（補充資訊）
 ===================== */
 .item-detail {
   display: none;
   margin-top: 10px;
   font-size: 0.95rem;
-  color: #444;
+  color: #555;
   line-height: 1.6;
 }
 
@@ -106,11 +106,12 @@ html, body {
   margin-bottom: 4px;
 }
 
+/* notes 再淡一點 */
 .item-detail .notes {
-  margin-top: 6px;
   color: #777;
 }
 
+/* 點開後顯示 */
 .item.open .item-detail {
   display: block;
 }
@@ -143,6 +144,10 @@ html, body {
   }
 
   .item-header .name {
-    font-size: 1.35rem;
+    font-size: 1.5rem;
+  }
+
+  .item-detail {
+    font-size: 1rem;
   }
 }
