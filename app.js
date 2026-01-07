@@ -25,7 +25,7 @@ fetch("places.json")
     showList(allPlaces);
   });
 
-// === 顯示清單（最保守版，一定會顯示） ===
+// === 顯示清單（點一下才展開） ===
 function showList(places) {
   listEl.innerHTML = "";
   markers.forEach(m => map.removeLayer(m));
@@ -37,22 +37,32 @@ function showList(places) {
   }
 
   places.forEach(p => {
-    // 地圖點
+    // 地圖 marker
     const marker = L.marker([p.lat, p.lng]).addTo(map);
     marker.bindPopup(`<strong>${p.name}</strong><br>${p.address}`);
     markers.push(marker);
 
-    // 清單項目（只顯示你說的一打開要看到的）
+    // 清單卡片
     const item = document.createElement("div");
     item.className = "item";
+
     item.innerHTML = `
-      <div class="name">${p.name}</div>
-      <div class="tags">${(p.tags || []).map(t => "#" + t).join(" ")}</div>
-      <div class="address">${p.address}</div>
+      <div class="item-header">
+        <div class="name">${p.name}</div>
+        <div class="tags">${(p.tags || []).map(t => "#" + t).join(" ")}</div>
+        <div class="address">${p.address}</div>
+      </div>
+
+      <div class="item-detail">
+        <div>🕒 ${p.hours || ""}</div>
+        <div>🍽 必吃：${(p.mustTry || []).join("、")}</div>
+        <div class="notes">${p.notes || ""}</div>
+      </div>
     `;
 
-    // 點一下才顯示更多
-    item.addEventListener("click", () => {
+    // 點 header：展開 / 收起 ＋ 地圖跳過去
+    item.querySelector(".item-header").addEventListener("click", () => {
+      item.classList.toggle("open");
       marker.openPopup();
       map.setView([p.lat, p.lng], 16);
     });
@@ -77,4 +87,5 @@ searchEl.addEventListener("input", () => {
   );
   showList(filtered);
 });
+
 
