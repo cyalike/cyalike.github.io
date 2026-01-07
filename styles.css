@@ -1,43 +1,49 @@
-/* ===== 清單卡片 ===== */
+/* ===== 清單卡片樣式 ===== */
 .item {
-  border-bottom: 1px solid #eee;
-  padding: 12px 0;
+  border-bottom: 1px solid #eaeaea;
+  padding: 14px 0;
+}
+
+/* 點擊區塊 */
+.item-header {
   cursor: pointer;
 }
 
-/* 一開始看到的區塊 */
+/* 餐廳名稱（再大一點點） */
 .item-header .name {
-  font-size: 1.2rem;   /* 👈 店名變大 */
+  font-size: 1.35rem;   /* 👈 比剛剛再大一點 */
   font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* 標籤 */
+.item-header .tags {
+  font-size: 0.9rem;
+  color: #999;
   margin-bottom: 4px;
 }
 
-.item-header .tags {
-  color: #888;
-  font-size: 0.9rem;
-  margin-bottom: 2px;
-}
-
+/* 地址 */
 .item-header .address {
   font-size: 0.85rem;
   color: #666;
 }
 
-/* 點開才出現的內容 */
+/* === 展開內容（預設隱藏） === */
 .item-detail {
-  display: none;
-  margin-top: 8px;
+  display: none;        /* 👈 關鍵在這 */
+  margin-top: 10px;
   font-size: 0.9rem;
   color: #444;
+  line-height: 1.5;
 }
 
 .item-detail .notes {
-  margin-top: 4px;
+  margin-top: 6px;
   color: #777;
 }
 
-/* 展開狀態 */
+/* === 點開之後顯示 === */
 .item.open .item-detail {
-  display: block;
+  display: block;      /* 👈 點了才出現 */
 }
-
