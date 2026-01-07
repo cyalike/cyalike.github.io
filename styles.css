@@ -8,6 +8,47 @@
 .item-header {
   cursor: pointer;
 }
+/* ===== 版面與地圖高度（一定要有） ===== */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.layout {
+  display: flex;
+  height: calc(100vh - 56px);
+}
+
+/* 地圖 */
+#map {
+  flex: 1;
+  min-height: 100%;
+}
+
+/* 右側清單 */
+.panel {
+  width: 360px;
+  overflow-y: auto;
+  padding: 12px;
+  border-left: 1px solid #eee;
+}
+
+/* 手機版 */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  #map {
+    height: 40vh;
+  }
+
+  .panel {
+    width: 100%;
+    height: 60vh;
+  }
+}
+
 
 /* 餐廳名稱（再大一點點） */
 .item-header .name {
