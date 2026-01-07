@@ -54,9 +54,11 @@ function showList(places) {
       </div>
 
       <div class="item-detail">
-        <div>🕒 ${p.hours || ""}</div>
-        <div>🍽 必吃：${(p.mustTry || []).join("、")}</div>
-        <div class="notes">${p.notes || ""}</div>
+        ${p.hours ? `<div>🕒 ${p.hours}</div>` : ""}
+        ${p.tags ? `<div>🏷 ${(p.tags || []).map(t => "#" + t).join(" ")}</div>` : ""}
+        ${p.mustTry ? `<div>🍽 必吃：${(p.mustTry || []).join("、")}</div>` : ""}
+        ${(p.seating || p.toilet) ? `<div>🪑 座位：${p.seating || "—"}　🚻 廁所：${p.toilet || "—"}</div>` : ""}
+        ${p.notes ? `<div class="notes">💬 ${p.notes}</div>` : ""}
       </div>
     `;
 
@@ -87,5 +89,3 @@ searchEl.addEventListener("input", () => {
   );
   showList(filtered);
 });
-
-
