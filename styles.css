@@ -1,83 +1,43 @@
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  height: 100%;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont;
-}
-
-.topbar {
-  height: 56px;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  font-weight: 700;
-  border-bottom: 1px solid #ddd;
-}
-
-.layout {
-  height: calc(100vh - 56px);
-  display: flex;
-}
-
-#map {
-  flex: 0 0 30%;
-}
-
-.panel {
-  flex: 0 0 70%;
-  padding: 12px;
-  overflow-y: auto;
-}
-
-.search {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
+/* ===== 清單卡片 ===== */
 .item {
-  padding: 10px 0;
   border-bottom: 1px solid #eee;
+  padding: 12px 0;
   cursor: pointer;
 }
 
-.item .name {
-  font-weight: 700;
+/* 一開始看到的區塊 */
+.item-header .name {
+  font-size: 1.2rem;   /* 👈 店名變大 */
+  font-weight: 600;
+  margin-bottom: 4px;
 }
 
-.item .tags {
-  font-size: 13px;
-  color: #555;
+.item-header .tags {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
 }
 
-.item .address {
-  font-size: 13px;
+.item-header .address {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* 點開才出現的內容 */
+.item-detail {
+  display: none;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.item-detail .notes {
+  margin-top: 4px;
   color: #777;
 }
 
-.empty {
-  padding: 24px 8px;
-  color: #888;
-  font-size: 14px;
+/* 展開狀態 */
+.item.open .item-detail {
+  display: block;
 }
-
-@media (max-width: 900px) {
-  .layout {
-    flex-direction: column;
-  }
-
-  #map {
-    height: 40vh;
-    flex: none;
-  }
-
-  .panel {
-    height: 60vh;
-    flex: none;
-  }
-}
-
 
