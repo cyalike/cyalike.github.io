@@ -88,6 +88,3 @@ html, body {
 .item.open .item-detail {
   display: block;
 }
-
-#map { height: 300px; background: red; }
-
