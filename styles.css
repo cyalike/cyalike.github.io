@@ -11,7 +11,7 @@
 
 /* 餐廳名稱（再大一點點） */
 .item-header .name {
-  font-size: 1.35rem;   /* 👈 比剛剛再大一點 */
+  font-size: 1.35rem;
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -31,7 +31,7 @@
 
 /* === 展開內容（預設隱藏） === */
 .item-detail {
-  display: none;        /* 👈 關鍵在這 */
+  display: none;
   margin-top: 10px;
   font-size: 0.9rem;
   color: #444;
@@ -45,5 +45,5 @@
 
 /* === 點開之後顯示 === */
 .item.open .item-detail {
-  display: block;      /* 👈 點了才出現 */
+  display: block;
 }
