@@ -1,58 +1,80 @@
-/* ===== 清單卡片樣式 ===== */
-.item {
-  border-bottom: 1px solid #eaeaea;
-  padding: 14px 0;
+/* =====================
+   基本設定
+===================== */
+* {
+  box-sizing: border-box;
 }
 
-/* 點擊區塊 */
-.item-header {
-  cursor: pointer;
-}
-/* ===== 版面與地圖高度（一定要有） ===== */
 html, body {
   height: 100%;
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               "PingFang TC", "Noto Sans TC", sans-serif;
+  background: #fff;
+  color: #222;
 }
 
+/* =====================
+   Header
+===================== */
+.topbar {
+  height: 56px;
+  line-height: 56px;
+  padding: 0 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+
+/* =====================
+   主版面
+===================== */
 .layout {
   display: flex;
   height: calc(100vh - 56px);
 }
 
-/* 地圖 */
+/* 地圖（輔助） */
 #map {
-  flex: 1;
-  min-height: 100%;
+  width: 38%;
+  min-width: 260px;
 }
 
-/* 右側清單 */
+/* 右側清單（主角） */
 .panel {
-  width: 360px;
+  width: 62%;
   overflow-y: auto;
-  padding: 12px;
-  border-left: 1px solid #eee;
+  padding: 16px;
 }
 
-/* 手機版 */
-@media (max-width: 768px) {
-  .layout {
-    flex-direction: column;
-  }
-
-  #map {
-    height: 40vh;
-  }
-
-  .panel {
-    width: 100%;
-    height: 60vh;
-  }
+/* =====================
+   搜尋欄
+===================== */
+.search {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 16px;
 }
 
+/* =====================
+   清單卡片
+===================== */
+.item {
+  border-bottom: 1px solid #eee;
+  padding: 14px 0;
+}
 
-/* 餐廳名稱（再大一點點） */
+/* 點擊區 */
+.item-header {
+  cursor: pointer;
+}
+
+/* 店名（主視覺） */
 .item-header .name {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -70,13 +92,19 @@ html, body {
   color: #666;
 }
 
-/* === 展開內容（預設隱藏） === */
+/* =====================
+   展開內容（預設隱藏）
+===================== */
 .item-detail {
   display: none;
   margin-top: 10px;
   font-size: 0.9rem;
   color: #444;
-  line-height: 1.5;
+  line-height: 1.6;
+}
+
+.item-detail div {
+  margin-bottom: 4px;
 }
 
 .item-detail .notes {
@@ -84,7 +112,39 @@ html, body {
   color: #777;
 }
 
-/* === 點開之後顯示 === */
+/* 點開後顯示 */
 .item.open .item-detail {
   display: block;
+}
+
+/* =====================
+   空狀態
+===================== */
+.empty {
+  color: #999;
+  font-size: 0.95rem;
+  padding: 20px 0;
+}
+
+/* =====================
+   手機版
+===================== */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  #map {
+    width: 100%;
+    height: 35vh;
+  }
+
+  .panel {
+    width: 100%;
+    height: 65vh;
+  }
+
+  .item-header .name {
+    font-size: 1.3rem;
+  }
 }
