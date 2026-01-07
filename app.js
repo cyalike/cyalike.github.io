@@ -1,9 +1,13 @@
 // === 地圖初始化 ===
 const map = L.map('map').setView([23.7, 121], 7);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19
-}).addTo(map);
+L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+  {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap & CARTO'
+  }
+).addTo(map);
 
 // === DOM ===
 const listEl = document.getElementById("list");
